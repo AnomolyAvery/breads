@@ -4,7 +4,9 @@ const bread = require('../models/bread');
 const breadsRouter = Router();
 
 breadsRouter.get('/', (req, res) => {
-    res.json(bread);
+    res.render('index', {
+        breads: bread,
+    });
 });
 
 breadsRouter.get('/:arrayIndex', (req, res) => {
