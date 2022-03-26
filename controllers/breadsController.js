@@ -10,7 +10,15 @@ breadsRouter.get('/', (req, res) => {
 });
 
 breadsRouter.get('/:arrayIndex', (req, res) => {
-    res.json(bread[req.params.arrayIndex]);
+    const foundBread = bread[req.params.arrayIndex];
+
+    if (!foundBread) {
+        return res.send(404);
+    }
+
+    res.render('show', {
+        bread: foundBread,
+    });
 });
 
 module.exports = breadsRouter;
