@@ -3,8 +3,9 @@ const bread = require('../models/bread');
 
 const breadsRouter = Router();
 
+// INDEX
 breadsRouter.get('/', (req, res) => {
-    res.render('index', {
+    return res.render('index', {
         breads: bread,
     });
 });
@@ -21,7 +22,7 @@ breadsRouter.post('/', (req, res) => {
         req.body.hasGluten = false;
     }
     bread.push(req.body);
-    res.redirect('/breads');
+    return res.status(303).redirect('/breads');
 });
 
 breadsRouter.get('/new', (req, res) => {
@@ -32,11 +33,45 @@ breadsRouter.get('/:arrayIndex', (req, res) => {
     const foundBread = bread[req.params.arrayIndex];
 
     if (!foundBread) {
-        return res.send(404);
+        return res.status(404).send('Bread not found');
     }
 
-    res.render('show', {
+    return res.render('show', {
         bread: foundBread,
+        index: req.params.arrayIndex,
+    });
+});
+
+breadsRouter.delete('/:arrayIndex', (req, res) => {
+    const foundBread = bread[req.params.arrayIndex];
+
+    if (!foundBread) {
+        return res.redirect('/breads');
+    }
+
+    bread.splice(req.params.arrayIndex, 1);
+    return res.status(303).redirect('/breads');
+});
+
+breadsRouter.put('/:arrayIndex', (req, res) => {
+    if (isNaN(req.params.arrayIndex)) {
+        return res.status(404).send('Invalid bread index');
+    }
+
+    if (req.body.hasGluten === 'on') {
+        req.body.hasGluten = true;
+    } else {
+        req.body.hasGluten = false;
+    }
+
+    bread[req.params.arrayIndex] = req.body;
+    return res.status(303).redirect(`/breads/${req.params.arrayIndex}`);
+});
+
+breadsRouter.get('/:arrayIndex/edit', (req, res) => {
+    res.render('edit', {
+        bread: bread[req.params.arrayIndex],
+        index: req.params.arrayIndex,
     });
 });
 
