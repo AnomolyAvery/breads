@@ -1,7 +1,20 @@
+require('dotenv').config();
+
 const express = require('express');
 const methodOverride = require('method-override');
+const mongoose = require('mongoose');
 
-require('dotenv').config();
+mongoose.connect(
+    process.env.MONGODB_URI,
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    },
+    (err) => {
+        if (err) console.log(err);
+        else console.log('Connected to MongoDB');
+    }
+);
 
 const port = process.env.PORT;
 const app = express();
