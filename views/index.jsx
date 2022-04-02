@@ -12,9 +12,9 @@ const Index = ({ breads }) => {
                 </a>
             </div>
             <ul>
-                {breads.map((bread, i) => (
-                    <a href={`/breads/${i}`}>
-                        <li key={i}>{bread.name}</li>
+                {breads.map((bread) => (
+                    <a href={`/breads/${bread.id}`}>
+                        <li key={bread.id}>{bread.name}</li>
                     </a>
                 ))}
             </ul>

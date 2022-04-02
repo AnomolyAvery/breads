@@ -11,7 +11,7 @@ const breadSchema = new Schema({
     },
     image: {
         type: String,
-        default: 'http://placehold.it/500x500.png',
+        default: 'https://picsum.photos/500',
     },
 });
 

@@ -1,77 +1,124 @@
 const { Router } = require('express');
-const bread = require('../models/bread');
+const { isValidObjectId } = require('mongoose');
+const BreadModel = require('../models/bread');
 
 const breadsRouter = Router();
 
 // INDEX
-breadsRouter.get('/', (req, res) => {
+breadsRouter.get('/', async (req, res) => {
+    const breads = await BreadModel.find({});
+
     return res.render('index', {
-        breads: bread,
+        breads: breads,
     });
 });
 
 // CREATE
-breadsRouter.post('/', (req, res) => {
-    if (!req.body.image) {
-        req.body.image =
-            'https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80';
+breadsRouter.post('/', async (req, res) => {
+    try {
+        const bread = new BreadModel();
+
+        bread.name = req.body.name;
+        bread.hasGluten = req.body.hasGluten === 'on';
+        bread.image = req.body.image
+            ? req.body.image
+            : 'https://picsum.photos/500';
+
+        await bread.save();
+        return res.status(303).redirect('/breads');
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send('Something went wrong...');
     }
-    if (req.body.hasGluten === 'on') {
-        req.body.hasGluten = true;
-    } else {
-        req.body.hasGluten = false;
-    }
-    bread.push(req.body);
-    return res.status(303).redirect('/breads');
 });
 
 breadsRouter.get('/new', (req, res) => {
     res.render('new');
 });
 
-breadsRouter.get('/:arrayIndex', (req, res) => {
-    const foundBread = bread[req.params.arrayIndex];
+breadsRouter.get('/:id', async (req, res) => {
+    const { id } = req.params;
 
-    if (!foundBread) {
+    if (!isValidObjectId(id)) {
+        return res.status(404).send('Not found');
+    }
+
+    const bread = await BreadModel.findById(id);
+
+    if (!bread) {
         return res.status(404).send('Bread not found');
     }
 
     return res.render('show', {
-        bread: foundBread,
-        index: req.params.arrayIndex,
+        bread: bread,
+        index: bread._id,
     });
 });
 
-breadsRouter.delete('/:arrayIndex', (req, res) => {
-    const foundBread = bread[req.params.arrayIndex];
+breadsRouter.delete('/:id', async (req, res) => {
+    const { id } = req.params;
 
-    if (!foundBread) {
-        return res.redirect('/breads');
+    if (!isValidObjectId(id)) {
+        return res.status(404).send('Not found');
     }
 
-    bread.splice(req.params.arrayIndex, 1);
+    await BreadModel.deleteOne({ _id: id });
     return res.status(303).redirect('/breads');
 });
 
-breadsRouter.put('/:arrayIndex', (req, res) => {
-    if (isNaN(req.params.arrayIndex)) {
-        return res.status(404).send('Invalid bread index');
+breadsRouter.put('/:id', async (req, res) => {
+    const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+        return res.status(404).send('Not found');
     }
 
-    if (req.body.hasGluten === 'on') {
-        req.body.hasGluten = true;
-    } else {
-        req.body.hasGluten = false;
-    }
+    try {
+        const { name, image, hasGluten } = req.body;
 
-    bread[req.params.arrayIndex] = req.body;
-    return res.status(303).redirect(`/breads/${req.params.arrayIndex}`);
+        const bread = await BreadModel.findById(id);
+
+        if (!bread) {
+            return res.status(404).send('Bread not found');
+        }
+
+        if (name) {
+            bread.name = name;
+        }
+
+        if (image) {
+            bread.image = image;
+        }
+
+        if (hasGluten === 'on') {
+            bread.hasGluten = true;
+        } else {
+            bread.hasGluten = false;
+        }
+
+        await bread.save();
+
+        return res.status(303).redirect(`/breads/${id}`);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send('Something went wrong...');
+    }
 });
 
-breadsRouter.get('/:arrayIndex/edit', (req, res) => {
+breadsRouter.get('/:id/edit', async (req, res) => {
+    const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+        return res.status(404).send('Not found');
+    }
+
+    const bread = await BreadModel.findById(id);
+    if (!bread) {
+        return res.status(404).send('Bread not found');
+    }
+
     res.render('edit', {
-        bread: bread[req.params.arrayIndex],
-        index: req.params.arrayIndex,
+        bread: bread,
     });
 });
 
