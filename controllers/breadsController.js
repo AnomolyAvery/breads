@@ -62,7 +62,7 @@ breadsRouter.delete('/:id', async (req, res) => {
         return res.status(404).send('Not found');
     }
 
-    await BreadModel.deleteOne({ _id: id });
+    await BreadModel.findByIdAndDelete(id);
     return res.status(303).redirect('/breads');
 });
 
@@ -76,27 +76,11 @@ breadsRouter.put('/:id', async (req, res) => {
     try {
         const { name, image, hasGluten } = req.body;
 
-        const bread = await BreadModel.findById(id);
-
-        if (!bread) {
-            return res.status(404).send('Bread not found');
-        }
-
-        if (name) {
-            bread.name = name;
-        }
-
-        if (image) {
-            bread.image = image;
-        }
-
-        if (hasGluten === 'on') {
-            bread.hasGluten = true;
-        } else {
-            bread.hasGluten = false;
-        }
-
-        await bread.save();
+        await BreadModel.findByIdAndUpdate(id, {
+            name: name,
+            image: image,
+            hasGluten: hasGluten === 'on',
+        });
 
         return res.status(303).redirect(`/breads/${id}`);
     } catch (err) {
