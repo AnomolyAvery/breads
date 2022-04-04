@@ -19,6 +19,10 @@ const breadSchema = new Schema({
     },
 });
 
+breadSchema.methods.getBakedBy = function () {
+    return `${this.name} was baked by ${this.baker}`;
+};
+
 const BreadModel = model('Bread', breadSchema);
 
 module.exports = BreadModel;
