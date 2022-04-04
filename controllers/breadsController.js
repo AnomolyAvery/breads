@@ -23,6 +23,7 @@ breadsRouter.post('/', async (req, res) => {
         bread.image = req.body.image
             ? req.body.image
             : 'https://picsum.photos/500';
+        bread.baker = req.body.baker;
 
         await bread.save();
         return res.status(303).redirect('/breads');
@@ -74,12 +75,13 @@ breadsRouter.put('/:id', async (req, res) => {
     }
 
     try {
-        const { name, image, hasGluten } = req.body;
+        const { name, image, hasGluten, baker } = req.body;
 
         await BreadModel.findByIdAndUpdate(id, {
             name: name,
             image: image,
             hasGluten: hasGluten === 'on',
+            baker: baker,
         });
 
         return res.status(303).redirect(`/breads/${id}`);

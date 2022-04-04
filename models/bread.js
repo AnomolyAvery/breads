@@ -13,6 +13,10 @@ const breadSchema = new Schema({
         type: String,
         default: 'https://picsum.photos/500',
     },
+    baker: {
+        type: String,
+        enum: ['Rachel', 'Monica', 'Joey', 'Chandler', 'Ross', 'Phoebe'],
+    },
 });
 
 const BreadModel = model('Bread', breadSchema);
