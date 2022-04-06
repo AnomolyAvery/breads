@@ -7,10 +7,12 @@ const breadsRouter = Router();
 
 // INDEX
 breadsRouter.get('/', async (req, res) => {
-    const breads = await BreadModel.find({});
+    const bakers = await BakerModel.find();
+    const breads = await BreadModel.find();
 
     return res.render('index', {
         breads: breads,
+        bakers: bakers,
     });
 });
 
