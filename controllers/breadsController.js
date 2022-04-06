@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { isValidObjectId } = require('mongoose');
+const BakerModel = require('../models/baker');
 const BreadModel = require('../models/bread');
 
 const breadsRouter = Router();
@@ -33,8 +34,11 @@ breadsRouter.post('/', async (req, res) => {
     }
 });
 
-breadsRouter.get('/new', (req, res) => {
-    res.render('new');
+breadsRouter.get('/new', async (req, res) => {
+    const bakers = await BakerModel.find();
+    res.render('new', {
+        bakers,
+    });
 });
 
 breadsRouter.get('/:id', async (req, res) => {

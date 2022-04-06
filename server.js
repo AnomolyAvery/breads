@@ -33,6 +33,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/breads', require('./controllers/breadsController'));
+app.use('/bakers', require('./controllers/bakersController'));
 
 app.get('*', (req, res) => {
     res.send(404);
