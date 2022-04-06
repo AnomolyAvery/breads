@@ -48,7 +48,7 @@ breadsRouter.get('/:id', async (req, res) => {
         return res.status(404).send('Not found');
     }
 
-    const bread = await BreadModel.findById(id);
+    const bread = await BreadModel.findById(id).populate('baker');
 
     if (!bread) {
         return res.status(404).send('Bread not found');
@@ -107,8 +107,11 @@ breadsRouter.get('/:id/edit', async (req, res) => {
         return res.status(404).send('Bread not found');
     }
 
+    const bakers = await BakerModel.find();
+
     res.render('edit', {
         bread: bread,
+        bakers: bakers,
     });
 });
 
