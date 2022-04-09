@@ -27,6 +27,12 @@ bakerSchema.virtual('breads', {
     foreignField: 'baker',
 });
 
+bakerSchema.post('findOneAndDelete', function () {
+    BreadModel.deleteMany({
+        baker: this._conditions._id,
+    }).then((deleteStatus) => console.log(deleteStatus));
+});
+
 const BakerModel = model('Baker', bakerSchema);
 
 module.exports = BakerModel;

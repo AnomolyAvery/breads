@@ -18,6 +18,9 @@ const Show = ({ baker }) => {
                     <li key={bread.id}>{bread.name}</li>
                 ))}
             </ul>
+            <form action={`/bakers/${baker._id}?_method=DELETE`} method="POST">
+                <input type={'submit'} value={'Delete'} />
+            </form>
         </Default>
     );
 };
