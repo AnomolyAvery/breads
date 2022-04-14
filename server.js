@@ -36,7 +36,7 @@ app.use('/breads', require('./controllers/breadsController'));
 app.use('/bakers', require('./controllers/bakersController'));
 
 app.get('*', (req, res) => {
-    res.send(404);
+    res.sendStatus(404);
 });
 
 app.listen(port, () => {
